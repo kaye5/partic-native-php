@@ -2,11 +2,10 @@
     try {
         require_once(__DIR__.'/../index.php');
         if(authorize()){
-            $profile = findUser($_POST['email']);
-            json($profile);
+            sendStatus(200);
         }
         else
-        sendStatus(403);
+            sendStatus(403);
     } catch (\Throwable $th) {
         handleError($th);
     }    

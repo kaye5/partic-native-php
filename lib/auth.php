@@ -16,9 +16,12 @@
      */
     function authenticate(){
         $profile = findUserWithPassword($_POST['email'],$_POST['password']);
-        return JWT::encode(array(
-            "email" => $profile->email
-        ),$_ENV['JWT']);
+        if($profile)
+            return JWT::encode(array(
+                "email" => $profile->email
+            ),$_ENV['JWT']);
+        else
+            return false;
     }
     /**
      * Extract bearer token from header auth 

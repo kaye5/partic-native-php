@@ -1,9 +1,10 @@
 <?php
     //Start CORS  header
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: POST, GET");
+    header("Access-Control-Allow-Origin: http://localhost:3000");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
+    // header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Max-Age: 3600");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, Origin");
     //End CORS header
 
     /**
@@ -19,6 +20,7 @@
      */
     function send($message){
         header("Content-Type: application/text; charset=UTF-8");
+        http_response_code(200);
         echo $message;
     }
     /**
@@ -26,7 +28,7 @@
      */
     function sendStatus($code){
         $status = statusCodes($code);
-        if($status){
+        if($status){            
             http_response_code($code);
             echo $status;
         } else {

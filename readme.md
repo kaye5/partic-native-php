@@ -35,3 +35,9 @@ for xampp  installation refer to this [Xampp](https://www.apachefriends.org/inde
 - ```json()``` http response json
 - ```authorize()``` authorize user
 - ```authenticate()``` authenticate user
+### Endpoints
+- ```/user```
+    - ```/getprofile.php```
+    - ```/login.php```
+    - ```/registeruser.php```
+    - ```/updateuser.php```

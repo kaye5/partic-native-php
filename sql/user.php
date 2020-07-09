@@ -1,15 +1,19 @@
 <?php
     require_once __DIR__.'/../config.php';
     
-    function addUser($name,$email,$password,$phone){
+    function addUser($name,$email,$password,$phone,$gender){
         global $pdo;
-        $sth = $pdo->prepare('INSERT INTO user (name,email,password,phone) values(:name,:email,:password,:phone)');
-        return $sth->execute(array(
+        $sth = $pdo->prepare('INSERT INTO user (name,email,password,phone,gender) values(:name,:email,:password,:phone,:gender)');
+        $sth->execute(array(
             'email' => strtolower($email),
             'name' => $name,            
             'password' => $password,
-            'phone' => $phone
+            'phone' => $phone,
+            'gender' => $gender
         ));
+        if($sth->errorInfo()[1] == 0)
+            return true;
+        return false;
     }
 
     function findUserWithPassword($email,$password){

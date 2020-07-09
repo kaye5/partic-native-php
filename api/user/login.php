@@ -1,7 +1,10 @@
 <?php
     require_once(__DIR__.'/../index.php');
     try {
-        send(authenticate());      
+        $token = authenticate();
+        if($token)
+            return send($token);
+        sendStatus(403);
     } catch (\Throwable $th) {
         handleError($th);
     }    

@@ -1,13 +1,17 @@
 class Auth {
-    static authenticateUser() {
-      localStorage.setItem('user',{name : "Dummy"});      
+    static authenticateUser(token) {
+      localStorage.setItem('user',token);
     }
 
     static isUserAuthenticated() {
-      if(localStorage.getItem('user') !== null){    
-        return true 
-      }
-      return false
+      try {
+        let token = localStorage.getItem('user')
+        if(!token)
+          return false
+        return true
+      } catch (error) {
+          return false
+      }      
     }
     static deauthenticateUser() {
       localStorage.removeItem('user');

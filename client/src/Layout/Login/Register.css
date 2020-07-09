@@ -1,0 +1,36 @@
+#stepProgressBar {
+    width: 300px;
+    margin: 0 auto;
+}
+div.stepper {
+    width: 50%;
+    float: left;
+    font-size: 12px;
+    position: relative;
+}
+div.stepper:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: greenyellow;
+    top: 25px;
+    left: -50%;
+    z-index: -1;
+}
+div.stepper:first-child:after {
+    content: none;
+}
+.stepper-item.active {
+    border-color: greenyellow;
+    color: greenyellow;
+}
+.stepper-item {
+    font-size: 2rem;
+    width:3.5rem;
+    height: 3.5rem;
+    line-height: 3.5rem;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-color: white;
+}

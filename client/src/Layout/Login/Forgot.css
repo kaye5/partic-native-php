@@ -1,0 +1,19 @@
+.forgot-form {
+    width: 50%;
+    margin: auto;
+    font-weight: bold;
+}
+
+@media (max-width : 1024px) {
+    .forgot-form {
+        width: 75%;
+        margin: auto;
+    }
+}
+
+@media (max-width : 768px) {
+    .forgot-form {
+        width: 100%;
+        margin: 0;
+    }
+}

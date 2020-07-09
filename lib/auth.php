@@ -1,6 +1,9 @@
 <?php
     use \Firebase\JWT\JWT;
     require_once(__DIR__.'/php-jwt/JWT.php');
+    /**
+     * Authorize user using bearer jwt token send from header 
+     */
     function authorize(){
         $token = getBearerToken(getallheaders()['Authorization']);
         $decode = JWT::decode($token,$_ENV['JWT'],array('HS256'));
@@ -8,12 +11,18 @@
             return true;
         return false;
     }
+    /**
+     * get authentication token for access
+     */
     function authenticate(){
         $profile = findUserWithPassword($_POST['email'],$_POST['password']);
         return JWT::encode(array(
             "email" => $profile->email
         ),$_ENV['JWT']);
     }
+    /**
+     * Extract bearer token from header auth 
+     */
     function getBearerToken($token){
         $bearer = explode(' ',$token);
         return $bearer[1];

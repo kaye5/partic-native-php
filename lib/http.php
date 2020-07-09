@@ -1,18 +1,29 @@
 <?php
-    // required headers
+    //Start CORS  header
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: POST, GET");
     header("Access-Control-Max-Age: 3600");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");   
+    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    //End CORS header
+
+    /**
+     * Send response as json
+     */
     function json($data){
         header("Content-Type: application/json; charset=UTF-8");
         http_response_code(200);
         echo json_encode($data);
     }
+    /**
+     * Send Response as plain text
+     */
     function send($message){
         header("Content-Type: application/text; charset=UTF-8");
         echo $message;
     }
+    /**
+     * Send Response base on http status message
+     */
     function sendStatus($code){
         $status = statusCodes($code);
         if($status){
@@ -22,7 +33,7 @@
             throw new Error($status);
         }
     }
-
+    //Http status codes
     function statusCodes($code){
         switch ($code) {
             case 100: return 'Continue'; break;

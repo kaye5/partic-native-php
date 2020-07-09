@@ -7,7 +7,9 @@
 3.  Setup ./config.php to your needs.
 4.  Start Xampp apache and mysql server. you can skip turning on mysql if you have mysql service running.
 5.  Make you way to partic client directory using CLI.
-```cd C:\xampp\htdocs\partic\client```.
+```sh
+$ cd C:\xampp\htdocs\partic\client
+```
 6.  Run command below
 ```sh
 $ yarn install
@@ -28,3 +30,8 @@ for xampp  installation refer to this [Xampp](https://www.apachefriends.org/inde
 -  ```/config.php``` App configuration.
 -  ```/sql/...``` SQL script.
 -  ```/client/``` Frontend
+### Library
+- ```send()``` http response plain/text
+- ```json()``` http response json
+- ```authorize()``` authorize user
+- ```authenticate()``` authenticate user

@@ -4,20 +4,24 @@ import secPic from '../../Asset/img/homebot.png'
 import './Home.css'
 import {eventData}from '../../dataTest/event.js'
 import { Link } from 'react-router-dom';
-
+import instance from '../../Modules/instances'
 export default  class Home extends React.Component{
     constructor(props){
         super(props)
         this.state ={
             search : '',
             categories : 'Categories',
+            category : {},
             events : [],
         }
         this.handleChange = this.handleChange.bind(this)
     }
     componentDidMount(){
-        this.setState({
-            events : eventData,
+        instance.get('/category/get.php').then(res => {
+            this.setState({
+                events : eventData,
+                category : res.data
+            })
         })
     }
     handleChange(ev){
@@ -40,6 +44,20 @@ export default  class Home extends React.Component{
             return(<button className="btn partic-btn partic-blue-bg ev-bt" onClick={()=>this.handleBtnClick(id)}>Buy</button>)
     }
     
+    renderCategoryOption(){
+        let el = []
+        for(let key in this.state.category){
+            let cat = this.state.category[key]
+            el.push(
+                <React.Fragment key={cat}>
+                {/* eslint-disable-next-line  */}
+                <option className="dropdown-item" accessKey="categories" value={cat} onMouseDown={this.handleChange}>{cat}</option>
+                </React.Fragment>
+            )
+        }
+        return el;
+    }
+
     render(){
         return(
             <div>
@@ -58,19 +76,16 @@ export default  class Home extends React.Component{
                     <div className="col-sm-12 col-md-12 col-lg-7">
                         <img src={mainPic} alt="main" width="100%"/>
                     </div>
-                </div>
+                </div>                
                 <div className="cont-search">
                     <div><h5>Find Party</h5></div>
                     <div className="row mt-4">
                         <div className="col-12 col-md-3 " style={{textAlign:"center"}}>
                             <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{this.state.categories}</button>
-                            <div className="dropdown-menu">
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Party" onMouseDown={this.handleChange}>Party</option>
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Music" onMouseDown={this.handleChange}>Music</option>
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Show" onMouseDown={this.handleChange}>Show</option>
+                            <div className="dropdown-menu">                                
+                            {
+                                this.renderCategoryOption()
+                            }
                             </div>
                         </div>
                         <div className="col-12 col-md-6 my-3"><input name="search" placeholder="search" value={this.state.search} onChange={this.handleChange} className="inpt form-control"/>

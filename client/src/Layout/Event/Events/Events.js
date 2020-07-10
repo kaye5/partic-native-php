@@ -1,7 +1,7 @@
 import React from 'react';
 import '../Events.css'
-import {eventData}from '../../../dataTest/event.js'
 import { Link, Redirect } from 'react-router-dom';
+import instance from '../../../Modules/instances'
 export default class Events extends React.Component{
     constructor(props){
         super(props)
@@ -9,6 +9,7 @@ export default class Events extends React.Component{
             events : [],
             query : false,
             categories : 'Categories',
+            category : {},
             loc : ['Medan','Jakarta','Bandung','Surabaya','Makasar','Yogyakarta'],
             link : false
         }
@@ -20,9 +21,25 @@ export default class Events extends React.Component{
     }
     componentDidMount(){
         let query = new URLSearchParams(window.location.search)
-        this.setState({
-            events : eventData,
-            query : query.get('collection')
+        //fetch category 
+        instance.get('/category/get.php').then(res => {
+            this.setState({
+                category : res.data,
+                query : query.get('collection')
+            })
+        })
+        //fetch city
+        instance.get('/city/get.php').then(res =>{
+            let temp = []
+            for(let key in res.data)
+                temp.push(res.data[key])
+            this.setState({loc : temp})
+        })
+        //fetch event
+        instance.get('/event/getAll.php').then(res=>{
+            this.setState({
+                events : res.data
+            })
         })
     }
     componentWillUpdate(){
@@ -48,6 +65,44 @@ export default class Events extends React.Component{
         else 
             return(<button className="btn partic-btn partic-blue-bg ev-bt">Buy</button>)
     }
+
+    renderCategoryOption(){
+        let el = []
+        for(let key in this.state.category){
+            let cat = this.state.category[key]
+            el.push(
+                <React.Fragment key={cat + 'event'}>
+                {/* eslint-disable-next-line  */}
+                <option className="dropdown-item" accessKey="categories" value={cat} onMouseDown={this.handleChange}>{cat}</option>
+                </React.Fragment>
+            )
+        }
+        return el;
+    }
+
+    renderEvents(){
+        let el = [];
+        this.state.events.forEach((event)=>{
+            el.push(
+            <div className="row row-evs my-5" key={event.id}>
+                <div className="col-sm-12 col-md-3 p-0">
+                    <a href={`/events/${event.id}`}><img src={event.image} alt={event.id} width="100%" className="img-evs"/></a>
+                </div>
+                <div className="col-sm-12 col-md-6">
+                    <h2><b>{event.name}</b></h2>
+                    <p className="partic-yellow-t">{event.start}</p>                                    
+                    <p><b><i className="fa fa-map-marker"></i>&nbsp;&nbsp;&nbsp;{event.location}</b></p>
+                </div>
+                <div className="col-sm-12 col-md-3">
+                    <Link to={`/events/${event.id}`}>
+                    {this.renderEventBtn(event.price,event.status)}
+                    </Link>
+                </div>
+            </div>)
+        })
+        return el;
+    }
+
     render(){
         return(
             <React.Fragment>
@@ -79,12 +134,7 @@ export default class Events extends React.Component{
                         <div className="col-12 col-md-3 " style={{textAlign:"center"}}>
                             <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{this.state.categories}</button>
                             <div className="dropdown-menu">
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Party" onMouseDown={this.handleChange}>Party</option>
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Music" onMouseDown={this.handleChange}>Music</option>
-                                {/* eslint-disable-next-line  */}
-                                <option className="dropdown-item" accessKey="categories" value="Show" onMouseDown={this.handleChange}>Show</option>
+                                {this.renderCategoryOption()}
                             </div>
                         </div>
                         <div className="col-12 col-md-6 my-3"><input name="search" placeholder="search" value={this.state.search} onChange={this.handleChange} className="inpt form-control"/>
@@ -124,23 +174,7 @@ export default class Events extends React.Component{
                         {this.state.query && <span className="btn partic-btn partic-blue-bg" style={{width : "200px"}}>{this.state.query}</span>}
                     </div>
                     {
-                        this.state.events.map(event=>(                            
-                            <div className="row row-evs my-5" key={event.id}>
-                                <div className="col-sm-12 col-md-3 p-0">
-                                    <a href={`/events/${event.id}`}><img src={event.img} alt={event.id} width="100%" className="img-evs"/></a>
-                                </div>
-                                <div className="col-sm-12 col-md-6">
-                                    <h2><b>{event.name}</b></h2>
-                                    <p className="partic-yellow-t">{event.date}</p>                                    
-                                    <p><b><i className="fa fa-map-marker"></i>&nbsp;&nbsp;&nbsp;{event.location}</b></p>
-                                </div>
-                                <div className="col-sm-12 col-md-3">
-                                    <Link to={`/events/${event.id}`}>
-                                    {this.renderEventBtn(event.price,event.status)}
-                                    </Link>
-                                </div>
-                            </div>
-                        ))
+                        this.renderEvents()
                     }
                 </div>
             </React.Fragment>

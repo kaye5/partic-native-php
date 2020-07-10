@@ -1,14 +1,12 @@
 import React from 'react';
-import {eventData} from '../../../dataTest/event'
-import {commentData} from '../../../dataTest/comment'
 import './Detail.css'
 import Checkout from '../Checkout/Checkout';
+import instance from '../../../Modules/instances'
 export default  class Detail extends React.Component{
     constructor(props){
         super(props)
         this.state = {
             event : {
-
             },
             comment : [],
             commentCount : 3,
@@ -17,15 +15,16 @@ export default  class Detail extends React.Component{
     
     componentDidMount(){
         try{
-            let idx = parseInt(this.props.match.params.id);
-            if(eventData[idx-1])
-                this.setState({event : eventData[idx-1],comment : commentData})
-            else 
+            //get event data
+            instance.get(`/event/get.php?id=${this.props.match.params.id}`).then((res)=>{
+                this.setState({event : res.data})
+            })
+            
                 // eslint-disable-next-line
                 throw 'error'
         } catch (err){
             this.setState({events : 'not found'})
-        }
+        }        
     }
     favClick(ev){
         if(ev.target.className === 'btn detail-act-btn text-danger')
@@ -85,7 +84,7 @@ export default  class Detail extends React.Component{
             <React.Fragment>
                 <div className="row">
                     <div className="col-12 col-md-6">
-                        <img src={event.img} alt="main" width="100%" style={{borderRadius:"25px"}}/>
+                        <img src={event.image} alt="main" width="100%" style={{borderRadius:"25px"}}/>
                     </div>
                     <div className="col-12 col-md-6">
                         <div className="row">
@@ -94,14 +93,14 @@ export default  class Detail extends React.Component{
                             </div>
                             <div className="col-8" style={{alignSelf : "center"}}>
                                 <h4><b>{event.hostName}</b></h4>
-                                <h6>{event.hostUsername}</h6>
+                                <h6>{event.email}</h6>
                             </div>
                         </div>
                         <div>
-                            <p className="partic-yellow-t m-0">{event.date}</p>
+                            <p className="partic-yellow-t m-0">{event.datecreate}</p>
                             <h3><b>{event.name}</b></h3>
                             <p><i className="fa fa-map-marker mr-2"/>{event.location}</p>
-                            <p><i className="fa fa-clock-o mr-2" />{event.date}</p>
+                            <p><i className="fa fa-clock-o mr-2" />{event.openregis}</p>
                             <Checkout event={this.state.event}/>
                         </div>
                     </div>
@@ -121,10 +120,7 @@ export default  class Detail extends React.Component{
                         <h4><i className="fa fa-question-circle mx-3"/>Detail</h4>
                     </div>
                     <div className="row detail-text p-4">
-                        <h4>Title</h4>
-                        <p className="text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ullamcorper facilisis eros eu commodo. Sed tristique aliquet nunc. Nam ut fringilla turpis, laoreet fringilla nisi. Sed varius augue in vehicula bibendum. Suspendisse a dolor velit. Proin sed orci molestie, malesuada sem id, auctor sem. Praesent suscipit sit amet odio tempus fermentum. Quisque vel erat elementum, condimentum nisl et, tincidunt enim.
-                        <br/><br/>
-                        Phasellus tincidunt leo elit. Quisque auctor lacinia diam, a tincidunt magna faucibus euismod. Aenean laoreet accumsan iaculis. Mauris non ex dignissim, lacinia tortor vitae, condimentum velit. Integer non finibus nunc. Proin odio turpis, efficitur nec dictum vel, tincidunt ut lectus. In at diam accumsan, ullamcorper mi ut, tincidunt elit. In egestas eros augue, non consequat mi facilisis sit amet. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+                        <p className="text-justify">{this.state.event.description}</p>
                     </div>
                 </div>
                 <div className="detail-comment my-5" id='comments'>

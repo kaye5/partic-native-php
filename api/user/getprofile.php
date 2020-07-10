@@ -4,9 +4,7 @@
         $profile = authorize();
         if($profile){            
             json($profile);
-        }
-        else
-            sendStatus(403);
+        }        
     } catch (\Throwable $th) {
         handleError($th);
     }    

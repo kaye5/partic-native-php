@@ -20,14 +20,13 @@
         global $pdo;
         $sth = $pdo->prepare('SELECT * FROM user where email=:email and password=:password');
         $sth->execute(array(
-            'email' => strtolower($email),
+            'email' => $email,
             'password' => $password
         ));
         return $sth->fetch();
     }
     function findUser($email){
         global $pdo;       
-        // $sth = $pdo->prepare('SELECT FROM user where email=:email');
         $sth = $pdo->prepare("SELECT * FROM user where email=:email");
         $sth->execute(array(
             'email' => strtolower($email),

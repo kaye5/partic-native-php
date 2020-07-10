@@ -5,12 +5,16 @@
      * Authorize user using bearer jwt token send from header 
      */
     function authorize(){
-        $token = getBearerToken(getallheaders()['Authorization']);
-        $decode = JWT::decode($token,$_ENV['JWT'],array('HS256'));
-        $user = findUser($decode->email);
-        if($user)
-            return $user;
-        return false;
+        try {
+            $token = getBearerToken(getallheaders()['Authorization']);
+            $decode = JWT::decode($token,$_ENV['JWT'],array('HS256'));
+            $user = findUser($decode->email);
+            if($user)
+                return $user;
+            return false;
+        } catch (\Throwable $th) {
+            return false;
+        }        
     }
     /**
      * get authentication token for access
@@ -29,6 +33,6 @@
      */
     function getBearerToken($token){
         $bearer = explode(' ',$token);
-        return $bearer[1];
+        return $bearer[1];             
     }
 ?>

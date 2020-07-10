@@ -7,8 +7,9 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import {Setting,Close,Password} from './Components'
+import {UserPrivateRoute} from '../../../MainRoute/PrivateRoute'
 import './Profile.css'
 const useStyles = makeStyles({
   list: {
@@ -86,9 +87,9 @@ export default function Profile() {
         </div>
         <div>
             <Switch>
-                <Route exact path='/profile/setting' component={()=> <Setting />}/>
-                <Route exact path='/profile/password' component={()=> <Password />}/>
-                <Route exact path='/profile/close' component={()=> <Close />}/>
+                <UserPrivateRoute exact path='/profile/setting' component={()=> <Setting />}/>
+                <UserPrivateRoute exact path='/profile/password' component={()=> <Password />}/>
+                <UserPrivateRoute exact path='/profile/close' component={()=> <Close />}/>
             </Switch>
         </div>
     </React.Fragment>

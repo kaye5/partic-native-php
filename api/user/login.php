@@ -4,7 +4,6 @@
         $token = authenticate();
         if($token)
             return send($token);
-        sendStatus(403);
     } catch (\Throwable $th) {
         handleError($th);
     }    

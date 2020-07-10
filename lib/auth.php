@@ -7,8 +7,9 @@
     function authorize(){
         $token = getBearerToken(getallheaders()['Authorization']);
         $decode = JWT::decode($token,$_ENV['JWT'],array('HS256'));
-        if(findUser($decode->email))
-            return true;
+        $user = findUser($decode->email);
+        if($user)
+            return $user;
         return false;
     }
     /**

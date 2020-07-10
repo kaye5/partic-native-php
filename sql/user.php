@@ -35,14 +35,26 @@
         return $sth->fetch();
     }
 
-    function updateUser($email,$password,$name,$phone){
+    function updateUser($email,$password,$name,$phone,$instagram,$job,$company,$blog,$website){
         global $pdo;
-        $sth = $pdo->prepare("UPDATE user SET email=:email, password=:password, name=:name, phone=:phone WHERE email=:email");
+        $sth = $pdo->prepare("UPDATE user SET email=:email, password=:password, name=:name, phone=:phone,instagram=:instagram,job=:job,company=:company,blog=:blog,website=:website WHERE email=:email");
         return $sth->execute(array(
             "email" => $email,
             "password" => $password,
             "name" => $name,
-            "phone" => $phone
+            "phone" => $phone,
+            "instagram" => $instagram,
+            "job" => $job,
+            "company" => $company,
+            "blog" => $blog,
+            "website" => $website,
+        ));
+    }
+    function deleteUser($email){
+        global $pdo;
+        $sth = $pdo->prepare("DELETE FROM user where email=:email");
+        return $sth->execute(array(
+            "email" => $email
         ));
     }
 ?>

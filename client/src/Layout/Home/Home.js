@@ -2,7 +2,6 @@ import React from 'react';
 import mainPic from '../../Asset/img/homehead.png'
 import secPic from '../../Asset/img/homebot.png'
 import './Home.css'
-import {eventData}from '../../dataTest/event.js'
 import { Link } from 'react-router-dom';
 import instance from '../../Modules/instances'
 export default  class Home extends React.Component{
@@ -19,8 +18,12 @@ export default  class Home extends React.Component{
     componentDidMount(){
         instance.get('/category/get.php').then(res => {
             this.setState({
-                events : eventData,
                 category : res.data
+            })
+        })
+        instance.get('/event/getHome.php?limit=8').then(res=>{
+            this.setState({
+                events : res.data
             })
         })
     }
@@ -57,7 +60,25 @@ export default  class Home extends React.Component{
         }
         return el;
     }
-
+    renderEvents(){
+        let el = [];
+        this.state.events.forEach((event)=>{
+            el.push(
+            <div className="col-12 col-sm-6 col-md-4 col-lg-3 my-3" key={event.id}>
+                <div className="card ev-card" style={{width:"100%"}}>
+                    <a href={`/events/${event.id}`}><img src={event.image} className="ev-img" alt={event.id}/></a>
+                    {this.renderEventBtn(event.price,event.status,event.id)}
+                    <div className="card-body pt-0">
+                        <span className="partic-yellow-t" style={{width : ".5rem"}}>{event.start}</span>
+                        <h5 className="card-title m-0"><b>{event.name}</b></h5>
+                        <span style={{fontSize:".7rem"}} className="partic-grey-t"><b>{event.location}</b></span>
+                    </div>
+                </div>
+            </div>)
+        })
+        return el;
+    }
+    
     render(){
         return(
             <div>
@@ -99,19 +120,7 @@ export default  class Home extends React.Component{
                     <h4><b>Trending Event</b></h4>
                     <div className="row" style={{justifyContent :"center"}}>
                         {
-                            this.state.events.map(event=>(
-                                <div className="col-12 col-sm-6 col-md-4 col-lg-3 my-3" key={event.id}>
-                                    <div className="card ev-card" style={{width:"100%"}}>
-                                        <a href={`/events/${event.id}`}><img src={event.img} className="ev-img" alt={event.id}/></a>
-                                        {this.renderEventBtn(event.price,event.status,event.id)}
-                                        <div className="card-body pt-0">
-                                            <span className="partic-yellow-t" style={{width : ".5rem"}}>{event.date}</span>
-                                            <h5 className="card-title m-0"><b>{event.name}</b></h5>
-                                            <span style={{fontSize:".7rem"}} className="partic-grey-t"><b>{event.location}</b></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
+                            this.renderEvents()
                         }
                     </div>
                     <div className="row" style={{justifyContent :"center",marginTop:"4rem"}}>

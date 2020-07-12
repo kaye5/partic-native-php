@@ -5,5 +5,4 @@
         $data = getTicket($profile->email);
         return json($data);
     }
-    sendStatus(403);
 ?>

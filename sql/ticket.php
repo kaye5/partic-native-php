@@ -13,7 +13,10 @@
     }
     function getTicket($email){
         global $pdo;
-        $sth = $pdo->prepare('select * from ticket where email=:email');
+        $sth = $pdo->prepare('select t.id,t.status,t.qty,t.price,t.datecreate,e.name,e.start,e.image,e.location
+        from ticket as t
+        join event as e on t.event = e.id
+        where t.email=:email');
         $sth->execute(array(
             'email' => $email
         ));

@@ -3,4 +3,5 @@
     require_once(__DIR__.'/lib/http.php');
     require_once(__DIR__.'/lib/errorHandler.php');
     require_once(__DIR__.'/lib/auth.php');
+    require_once(__DIR__.'/lib/upload.php');
 ?>

@@ -1,8 +1,8 @@
 import React from 'react'
-import {eventData} from '../../../dataTest/event' 
 import { Link } from 'react-router-dom'
 import {commentData} from '../../../dataTest/comment'
 import Modal from "@material-ui/core/Modal";
+import instance from '../../../Modules/instances';
 export default class Manage extends React.Component{
     constructor(props){
         super(props)
@@ -19,8 +19,9 @@ export default class Manage extends React.Component{
         }
     }
     componentDidMount(){
-        let idx = parseInt(this.props.match.params.id)
-        this.setState({event : eventData[idx-1],comment: commentData});
+        instance.get(`/event/get.php?id=${this.props.match.params.id}`).then(res=>{
+            this.setState({event : res.data,comment: commentData})
+        })
     }
     handleClick(event){
         this.setState({currency : event.target.id});
@@ -92,7 +93,7 @@ export default class Manage extends React.Component{
                 <div className="col-12 col-md-6 mb-5 p-0">
                     <div className="row" style={{justifyContent:"center"}}>
                         <div className="create-img">
-                        <img src={this.state.event.img} alt="post" height="400px" width="100%" className="img"/>
+                        <img src={this.state.event.image} alt="post" height="400px" width="100%" className="img"/>
                         <button className="btn partic-btn partic-yellow-bg create-img-text">Edit picture</button>
                         </div>
                     </div>
@@ -137,19 +138,19 @@ export default class Manage extends React.Component{
                     </div>
                     <div className="create-input" style={{width:"50%"}}>
                         <label>Slot</label>
-                        <input className="form-control" type="number" name="slot" required value={this.state.event.slot} onChange={(e)=>this.handleChange(e)}/>
+                        <input className="form-control" type="number" name="slot" required value={this.state.event.slot} onChange={(e)=>this.handleChange(e)} min='0'/>
                     </div>
                     <div className="row">
                         <div className="col-12 col-md-6 p-0 mb-3">
                             <div className="row"><label>Date</label></div>
                             <div className="row">
-                                <input type="date" name="date" required className="partic-date-picker"/>
+                                <input type="date" name="date" required className="partic-date-picker"  value={this.state.event.start}/>
                             </div>
                         </div>
                         <div className="col-12 col-md-6 p-0 mb-3">
                             <div className="row"><label>Time</label></div>
                             <div className="row">
-                                <input type="time" name="time" required className="partic-date-picker"/>
+                                <input type="time" name="time" required className="partic-date-picker" value={this.state.event.start}/>
                             </div>
                         </div>
                     </div>
@@ -161,13 +162,13 @@ export default class Manage extends React.Component{
                         <div className="col-12 col-md-6 p-0 mb-3">
                             <div className="row"><label>Open Registration</label></div>
                             <div className="row">
-                                <input type="date" name="openRegis" required className="partic-date-picker"/>
+                                <input type="date" name="openregis" required className="partic-date-picker" value={this.state.event.openregis}/>
                             </div>
                         </div>
                         <div className=" col-12 col-md-6 p-0">
                             <div className="row"><label>Close Registration</label></div>
                             <div className="row">
-                                <input type="date" name="closeRegis" required className="partic-date-picker"/>
+                                <input type="date" name="openregis" required className="partic-date-picker" value={this.state.event.closeregis}/>
                             </div>
                         </div>
                     </div>                    
@@ -218,9 +219,9 @@ export default class Manage extends React.Component{
                             :
                             <React.Fragment>
                                 <button className="btn detail-act-btn"><i className="fa fa-phone partic-yellow-t"/></button>
-                                <span className='profile-edit' onClick={()=>this.setState({edit : true})}>083194617930 <i className='fa fa-edit ml-2'/></span><br/>
+                                <span className='profile-edit' onClick={()=>this.setState({edit : true})}>{this.state.event.phone}<i className='fa fa-edit ml-2'/></span><br/>
                                 <button className="btn detail-act-btn"><i className="fa fa-envelope  partic-yellow-t"/></button>
-                                <span className='profile-edit' onClick={()=>this.setState({edit : true})}>partic@partic.com <i className='fa fa-edit ml-2'/></span>
+                                <span className='profile-edit' onClick={()=>this.setState({edit : true})}>{this.state.event.email}<i className='fa fa-edit ml-2'/></span>
                             </React.Fragment>
                         }
                     </div>

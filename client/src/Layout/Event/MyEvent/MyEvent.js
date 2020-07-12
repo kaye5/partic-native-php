@@ -1,7 +1,7 @@
 import React from 'react';
 import '../Events.css'
-import {eventData}from '../../../dataTest/event.js'
 import { Link, } from 'react-router-dom';
+import instance from '../../../Modules/instances';
 export default class MyEvent extends React.Component{
     constructor(props){
         super(props)
@@ -12,9 +12,8 @@ export default class MyEvent extends React.Component{
     }
     componentDidMount(){
         let query = new URLSearchParams(window.location.search)
-        this.setState({
-            events : eventData,
-            query : query.get('collection')
+        instance.get('event/getAll.php?category&city').then(res=>{
+            this.setState({events : res.data,query : query.get('collection')})            
         })
     }
     render(){
@@ -28,11 +27,11 @@ export default class MyEvent extends React.Component{
                         this.state.events.map(event=>(                            
                             <div className="row row-evs my-5" key={event.id}>
                                 <div className="col-sm-12 col-md-3 p-0">
-                                    <a href={`/events/manage/${event.id}`}><img src={event.img} alt={event.id} width="100%" className="img-evs"/></a>
+                                    <a href={`/events/manage/${event.id}`}><img src={event.image} alt={event.id} width="100%" className="img-evs"/></a>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
                                     <h2><b>{event.name}</b></h2>
-                                    <p className="partic-yellow-t">{event.date}</p>                                    
+                                    <p className="partic-yellow-t">{event.start}</p>                                    
                                     <p><b><i className="fa fa-map-marker"></i>&nbsp;&nbsp;&nbsp;{event.location}</b></p>
                                 </div>
                                 <div className="col-sm-12 col-md-3">

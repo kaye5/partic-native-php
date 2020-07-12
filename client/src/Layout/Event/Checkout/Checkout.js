@@ -48,7 +48,7 @@ export default function Checkout({...props}){
             } else {
                 setMsg({
                     type : 'error',
-                    msg : 'Something went wrong'
+                    msg : 'Please Login'
                 })
             }
         }).catch(err=>{

@@ -23,7 +23,7 @@ function UserRoute(){
             <UserPrivateRoute exact path="/events/manage/:id" component={(props)=>(<Manage {...props}/>)} />
             <UserPrivateRoute exact path="/events/participant/:id" component={(props)=>(<Participant {...props}/>)} />
             <Route exact path="/events/:id" component={(props)=>(<Detail {...props}/>)}/>   
-            <Route exact path="/events/:id/payment" component={()=>(<Payment/>)}/>
+            <Route exact path="/events/:id/payment" component={(props)=>(<Payment {...props}/>)}/>
         </Switch>
     )
 }

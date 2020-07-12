@@ -43,11 +43,13 @@ export default class Login extends Component {
         e.preventDefault()
         try {
             let res = await instance.post('/user/login.php', this.state.data)
-            Auth.authenticateUser(res.data)
-            this.setState({
-                modal: false,
-                close: true
-            })
+            if(res.data){
+                Auth.authenticateUser(res.data)
+                this.setState({
+                    modal: false,
+                    close: true
+                })
+            } else throw new Error("Wrong Password")
         } catch (error) {
             this.setState({
                 status: { type: 'error', msg: 'incorrect password' }

@@ -12,7 +12,7 @@ export default class MyEvent extends React.Component{
     }
     componentDidMount(){
         let query = new URLSearchParams(window.location.search)
-        instance.get('event/getAll.php?category&city').then(res=>{
+        instance.get('/admin/myEvent.php').then(res=>{
             this.setState({events : res.data,query : query.get('collection')})            
         })
     }

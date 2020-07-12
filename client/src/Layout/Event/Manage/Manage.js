@@ -3,25 +3,76 @@ import { Link } from 'react-router-dom'
 import {commentData} from '../../../dataTest/comment'
 import Modal from "@material-ui/core/Modal";
 import instance from '../../../Modules/instances';
+import Message from '../../../Modules/message';
 export default class Manage extends React.Component{
     constructor(props){
         super(props)
         this.state = {
             currency : 'IDR',
-            event : {
-
-            },
+            event : {},
             fav : '',
             comment : [],
             commentCount : 3,
             modalContact : false,
             edit : false,
+            city  : {}, cat : {},
+            temp : false,
+            confirm : false,
+            msg : {
+                type : '',
+                msg : ''
+            }
         }
+        
+    }
+    handleImgChange = (ev) => {
+        this.setState({event : {...this.state.event, image : ev.target.files[0]},temp : true})
+    };
+    onSubmit = (ev) => {
+        ev.preventDefault();
+        let form = new FormData();
+        for(let key in this.state.event)
+            form.set(key,this.state.event[key]);
+        instance.post('/event/edit.php',form,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res=>{
+            if(res.data === 'OK')
+                this.setState({msg : {type : 'success' , msg : 'Done'}})
+        })
+    }
+    
+    renderOption(data,name){
+        let el = [];
+        for(let key in data){
+            if(key === this.state.event[name]){
+                el.push(<option key={key+name}  value={1+parseInt(key)} selected>{data[key]}</option>)
+                continue
+            }                
+            el.push(<option key={key+name}  value={1+parseInt(key)}>{data[key]}</option>)
+        }
+        return el
+    }
+    fetchData(){
+        instance.get(`/category/get.php`).then(res=>{
+            this.setState({cat : res.data})
+        })
+        instance.get(`/city/get.php`).then(res=>{
+            this.setState({city : res.data})
+        })
+    }
+    imagePre(){
+        if(this.state.temp){
+            return URL.createObjectURL(this.state.event.image)
+        }            
+        else return this.state.event.image
     }
     componentDidMount(){
-        instance.get(`/event/get.php?id=${this.props.match.params.id}`).then(res=>{
+        instance.get(`/admin/eventDetail.php?id=${this.props.match.params.id}`).then(res=>{
             this.setState({event : res.data,comment: commentData})
         })
+        this.fetchData();
     }
     handleClick(event){
         this.setState({currency : event.target.id});
@@ -29,9 +80,7 @@ export default class Manage extends React.Component{
     handleChange(ev){
         let temp = this.state.event
         temp[ev.target.name] = ev.target.value
-        this.setState({
-            event : temp
-        })
+        this.setState({event : temp})
     }
     handleFav(){
         let likeBtn = document.getElementById('fav-btn')
@@ -86,29 +135,59 @@ export default class Manage extends React.Component{
         }
         return element
     }
+    deleteEvent(){
+        const confirmDelete = () => {
+            instance.post('/event/delete.php',{id : this.state.event.id}).then(res=>{
+                if(res.data === 'OK')
+                    window.location.href = '/events/my'
+            })
+        }
+        return (
+            <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.confirm}
+            onClose={()=>this.setState({confirm : false})}
+            >
+            <div
+                className="modal-dialog"
+                role="document"
+                style={{ textAlign: "center" ,top:"15%"}}
+            >
+                <div className="modal-content">
+                    <div className="modal-body">
+                        <h2>Confirm Delete</h2>
+                        <button className='btn partic-btn btn-danger py-2 px-3' onClick={confirmDelete}>Delete</button>
+                    </div>
+                </div>
+            </div>
+            </Modal>
+        )
+    }
     render(){
     return (
         <React.Fragment>
+            {this.deleteEvent()}
             <div className="row">
                 <div className="col-12 col-md-6 mb-5 p-0">
-                    <div className="row" style={{justifyContent:"center"}}>
+                    <div className="row my-2" style={{justifyContent:"center"}}>
                         <div className="create-img">
-                        <img src={this.state.event.image} alt="post" height="400px" width="100%" className="img"/>
-                        <button className="btn partic-btn partic-yellow-bg create-img-text">Edit picture</button>
-                        </div>
+                        <img src={this.imagePre()} alt="post" height="400px" width="100%" className="img"/>
+                        <input type='file' className="btn partic-btn partic-yellow-bg " onChange={(ev) => this.handleImgChange(ev)}/>
+                        </div>                        
                     </div>
                     <div className="row" style={{justifyContent:"center"}}>
                         <div className="cont-search text-center">
-                            <button className={"btn detail-act-btn "+this.state.fav} id="fav-btn"  onClick={(e)=>this.handleFav(e)}><i class="fa fa-heart mr-2"></i> 99</button>
+                            <button className={"btn detail-act-btn "+this.state.fav} id="fav-btn"  onClick={(e)=>this.handleFav(e)}><i className="fa fa-heart mr-2"></i> 99</button>
                             <a href="#comments"><button className="btn detail-act-btn">Comments</button></a>
                         </div>
                     </div>
                     <div className="row mt-5" style={{justifyContent:"center"}}>
-                        <Link to="/events/participant/1"><button className="btn partic-btn partic-blue-bg py-2 px-5">Manage Participant</button></Link>
+                        <Link to={"/events/participant/"+this.state.event.id}><button className="btn partic-btn partic-blue-bg py-2 px-5">Manage Participant</button></Link>
                     </div>
                 </div>
                 <div className="col-12 col-md-6 font-weight-bold mb-4">
-                <form method="POST" action="#">
+                <form>
                     <div className="create-input">
                         <label>Event name</label>
                         <input className="form-control" value={this.state.event.name} onChange={(e)=>this.handleChange(e)} type="text" name="name" required/>
@@ -132,7 +211,7 @@ export default class Manage extends React.Component{
                                 </div>
                             </div>
                             <div className="col-8 col-sm-9 col-lg-6 p-0">
-                                <input className="form-control" type="number" name="price" required value={parseInt(this.state.event.price)} onChange={(e)=>this.handleChange(e)}/>
+                                <input className="form-control" type="number" name="price" required value={this.state.event.price} onChange={(e)=>this.handleChange(e)}/>
                             </div>
                         </div>
                     </div>
@@ -140,17 +219,23 @@ export default class Manage extends React.Component{
                         <label>Slot</label>
                         <input className="form-control" type="number" name="slot" required value={this.state.event.slot} onChange={(e)=>this.handleChange(e)} min='0'/>
                     </div>
+                    <div className='create-input'>
+                        <label>Category</label>
+                        <select name='category_id' id="category" className="form-control" onChange={(e)=>this.handleChange(e)} defaultValue={parseInt(this.state.event.category_id)+1 || ''}>
+                        {this.renderOption(this.state.cat || {},'category_id')}
+                        </select>
+                    </div>
+                    <div className='create-input'>
+                        <label>City</label>                     
+                        <select name='city_id' id="city" className="form-control" onChange={(e)=>this.handleChange(e)} defaultValue={parseInt(this.state.event.city_id)+1 || ''}>
+                        {this.renderOption(this.state.city  || {},"city_id")}
+                        </select>
+                    </div>
                     <div className="row">
                         <div className="col-12 col-md-6 p-0 mb-3">
                             <div className="row"><label>Date</label></div>
                             <div className="row">
-                                <input type="date" name="date" required className="partic-date-picker"  value={this.state.event.start}/>
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-6 p-0 mb-3">
-                            <div className="row"><label>Time</label></div>
-                            <div className="row">
-                                <input type="time" name="time" required className="partic-date-picker" value={this.state.event.start}/>
+                                <input type="datetime-local"  name="start" required className="partic-date-picker" onChange={(e)=>this.handleChange(e)} value={this.state.event.date}/>
                             </div>
                         </div>
                     </div>
@@ -162,21 +247,22 @@ export default class Manage extends React.Component{
                         <div className="col-12 col-md-6 p-0 mb-3">
                             <div className="row"><label>Open Registration</label></div>
                             <div className="row">
-                                <input type="date" name="openregis" required className="partic-date-picker" value={this.state.event.openregis}/>
+                                <input type="date" name="openregis" required className="partic-date-picker" value={this.state.event.openregis} onChange={(e)=>this.handleChange(e)}/>
                             </div>
                         </div>
                         <div className=" col-12 col-md-6 p-0">
                             <div className="row"><label>Close Registration</label></div>
                             <div className="row">
-                                <input type="date" name="openregis" required className="partic-date-picker" value={this.state.event.closeregis}/>
+                                <input type="date" name="closeregis" required className="partic-date-picker" value={this.state.event.closeregis} onChange={(e)=>this.handleChange(e)}/>
                             </div>
                         </div>
                     </div>                    
                     </form>
+                    {this.state.msg && <Message data={this.state.msg} /> }  
                     <div className="my-3 flex-wrap">
+                        <button className="btn partic-btn partic-blue-bg py-2 px-5 m-3" onClick={(ev)=>this.onSubmit(ev)} type='submit'>Save Event</button>
                         <button className="btn partic-btn partic-yellow-bg py-2 px-5 m-3" onClick={()=>this.setState({modalContact : true})}>Contact Info</button>
-                        <button className="btn partic-btn partic-yellow-bg py-2 px-5 m-3">Send Email</button>
-                        <button className="btn partic-btn partic-yellow-bg py-2 px-5 m-3">Edit Event</button>
+                        <button className="btn partic-btn partic-yellow-bg py-2 px-5 m-3 bg-danger" onClick={()=>this.setState({confirm : true})}>Delete</button>
                     </div>
                 </div>                
             </div>

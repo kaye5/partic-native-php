@@ -17,28 +17,36 @@
             'status' => 'open', 'price' => $price, 'city'=>$city, 'cat' => $cat, 'email' => $email
         ));
     }
-    
-    function editEvent($name,$desc,$price,$date,$start,$open,$close,$loc,$img,$slot,$city,$cat){
+
+    function editEvent($name,$desc,$price,$start,$open,$close,$loc,$img,$slot,$city,$cat,$id){
         global $pdo;
-        $query = "update event set name=:name,slot=:slot,location=:loc,description=:desc,image=:img,datecreate=:date,start:start,openregis=:open,closeregis=:close,
-        status=:status,price=:price,city_id=:city,category_id=:cat) values(:name,:slot,:loc,:desc,
-        :img,:date,:start,:open,:close,:status,:price,:city,:cat,:email)";
+        $query = "update event set name=:name,slot=:slot,location=:loc,description=:desc,image=:img,start=:start,openregis=:open,closeregis=:close,
+        price=:price,city_id=:city,category_id=:cat where id=:id";
         $sth = $pdo->prepare($query);
-        return $sth->execute(array(
+        $sth->execute(array(
             'name' => $name, 'slot' => $slot,'loc'=>$loc, 'desc' => $desc,
-            'img' => $img, 'date' => $date, 'start' => $start, 'open' => $open, 'close' => $close,
-            'status' => 'open', 'price' => $price, 'city'=>$city, 'cat' => $cat
+            'img' => $img, 'start' => $start, 'open' => $open, 'close' => $close,
+            'price' => $price, 'city'=>$city, 'cat' => $cat,"id" =>$id
         ));
     }
 
-    function deleteEvent(){
-
+    function deleteEvent($id,$email){
+        global $pdo;
+        $sth = $pdo->prepare('delete from event where id=:id and email=:email');
+        $sth->execute(array('id'=>$id,'email'->$email));
     }
 
     function getAllEvent(){
         global $pdo;
-        $sth = $pdo->prepare("SELECT * FROM event order by id desc");
-        $sth->execute();        
+        $query = "SELECT e.* FROM event e ";
+        $city = '';
+        if(isset($_GET['city'])){
+            $query.= "join city c on c.id = e.city_id where c.name = :city ";
+            $city = $_GET['city'];
+        }            
+        $query .= "order by e.id desc";
+        $sth = $pdo->prepare($query);
+        $sth->execute(array('city'=>$city));
         return $sth->fetchAll();
     }
 
@@ -48,7 +56,7 @@
         inner join user us on e.email = us.email
         where e.id = :id");
         $sth->execute(array(
-            'id' => $id
+            'id' => $id,
         ));
         return $sth->fetch();
     }

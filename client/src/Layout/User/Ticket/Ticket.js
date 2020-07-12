@@ -71,6 +71,10 @@ export default  class Ticket extends React.Component{
                                         <div className="row tic-t"><i className="fa fa-clock-o"/>&nbsp;&nbsp;&nbsp;{data.start}</div>
                                         <div className="row tic-t"><i className="fa fa-calendar-o" />&nbsp;&nbsp;&nbsp;{data.start}</div>
                                         <div className={"row tic-t "+this.renderStatusColor(data.status)}>Status : {data.status.toUpperCase()}</div>
+                                        {
+                                            data.status.toLocaleLowerCase() === 'waiting for payment' &&
+                                            <a href={`/events/${data.id}/payment`} className='btn partic-blue-bg'>Make Payment</a>
+                                        }
                                     </div>
                                     <div className="col-12 col-md-3" style={{textAlign:"center"}}>
                                         <p className="font-weight-bold">Qty : {data.qty}</p>

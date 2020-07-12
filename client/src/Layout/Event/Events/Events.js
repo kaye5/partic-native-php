@@ -25,7 +25,7 @@ export default class Events extends React.Component{
         instance.get('/category/get.php').then(res => {
             this.setState({
                 category : res.data,
-                query : query.get('collection')
+                query : query.get('category')
             })
         })
         //fetch city
@@ -36,7 +36,8 @@ export default class Events extends React.Component{
             this.setState({loc : temp})
         })
         //fetch event
-        instance.get('/event/getAll.php').then(res=>{
+        let temp = query.get('city') ? '?city='+query.get('city') : '';
+        instance.get('/event/getAll.php'+temp).then(res=>{
             this.setState({
                 events : res.data
             })
@@ -44,10 +45,15 @@ export default class Events extends React.Component{
     }
     componentWillUpdate(){
         let query = new URLSearchParams(window.location.search)
-        if(this.state.query !== query.get('collection'))
-            this.setState({
-                query : query.get('collection')
+        if(this.state.query !== query.get('city')){
+            let temp = query.get('city') ? '?city='+query.get('city') : '';
+            instance.get('/event/getAll.php'+temp).then(res=>{
+                this.setState({
+                    events : res.data,
+                    query : query.get('city')
+                })       
             })
+        }
     }
     handleChange(ev){
         let temp = this.state;
@@ -100,6 +106,10 @@ export default class Events extends React.Component{
                 </div>
             </div>)
         })
+        if (el.length === 0 )
+            return (
+                <h1 className='text-center' >Not found</h1>
+            )
         return el;
     }
 
@@ -107,7 +117,7 @@ export default class Events extends React.Component{
         return(
             <React.Fragment>
                 {
-                    this.state.link && <Redirect to={window.location.pathname+`?collection=${this.state.link}`} />
+                    this.state.link && <Redirect to={window.location.pathname+`?city=${this.state.link}`} />
                 }
                 <div id="carouselExampleControls" className="carousel slide mb-5" data-ride="carousel">
                     <div className="carousel-inner shadow" style={{maxHeight : "500px",borderRadius:"20px"}}>
@@ -156,11 +166,11 @@ export default class Events extends React.Component{
                                     {
                                         this.state.loc.indexOf(data)%2 === 0 ? 
                                         <div className="coll-btn" key={data} >
-                                        <button className="btn partic-btn partic-yellow-bg" style={{width:"100%"}} onClick={()=>this.handleLocation(data)}>{data}</button>
+                                        <a className="btn partic-btn partic-yellow-bg" style={{width:"100%"}} href={`/events?city=${data}`}>{data}</a>
                                         </div>
                                         : 
                                         <div className="coll-btn">
-                                        <button className="btn partic-btn partic-blue-bg" style={{width:"100%"}} onClick={()=>this.handleLocation(data)}>{data}</button>
+                                        <a className="btn partic-btn partic-blue-bg" style={{width:"100%"}} href={`/events?city=${data}`}>{data}</a>
                                         </div>
                                     }
                                 </React.Fragment>                                
@@ -171,7 +181,12 @@ export default class Events extends React.Component{
                 <div className="allEvents">
                     <div className="my-5">
                         <h2><b>Events around : </b></h2>
-                        {this.state.query && <span className="btn partic-btn partic-blue-bg" style={{width : "200px"}}>{this.state.query}</span>}
+                        {this.state.query && 
+                        <React.Fragment>
+                        <span className="btn partic-btn partic-blue-bg" style={{width : "200px"}}>{this.state.query}</span>
+                        <a className="btn partic-btn bg-danger mx-3 text-white" href='/events'>X</a>
+                        </React.Fragment>
+                        }                        
                     </div>
                     {
                         this.renderEvents()

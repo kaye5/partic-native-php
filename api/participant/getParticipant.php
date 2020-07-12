@@ -1,9 +1,9 @@
 <?php
-    //View current user ticket
+    //View participant by event organizer
     require('../index.php');
     $profile = authorize();
     if($profile){
-        $data = getTicket($profile->email);
+        $data = getParticipant($_GET['id'],$profile->email);
         return json($data);
     }
 ?>

@@ -38,15 +38,26 @@
 
     function getAllEvent(){
         global $pdo;
-        $query = "SELECT e.* FROM event e ";
+        $query = "SELECT ev.* FROM event ev
+        join city ci on ci.id = ev.city_id 
+        join category ca on ca.id = ev.category_id";
         $city = '';
-        if(isset($_GET['city'])){
-            $query.= "join city c on c.id = e.city_id where c.name = :city ";
+        $category = '';
+        $bind = array();
+        if(isset($_GET['city']) && $_GET['city']){
+            $query.= " where ci.name = :city ";
             $city = $_GET['city'];
-        }            
-        $query .= "order by e.id desc";
+            $bind['city'] = $city;
+        }
+        if(isset($_GET['category']) && $_GET['category']){
+            $query.= " and ca.category = :category ";
+            $category = $_GET['category'];
+            $bind['category'] = $category;
+        }
+        $query .= " order by ev.id desc";
+        // var_dump($query,$bind);
         $sth = $pdo->prepare($query);
-        $sth->execute(array('city'=>$city));
+        $sth->execute($bind);
         return $sth->fetchAll();
     }
 

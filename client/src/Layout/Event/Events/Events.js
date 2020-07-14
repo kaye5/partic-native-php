@@ -25,7 +25,7 @@ export default class Events extends React.Component{
         instance.get('/category/get.php').then(res => {
             this.setState({
                 category : res.data,
-                query : query.get('category')
+                categories : query.get('category')
             })
         })
         //fetch city
@@ -36,8 +36,9 @@ export default class Events extends React.Component{
             this.setState({loc : temp})
         })
         //fetch event
-        let temp = query.get('city') ? '?city='+query.get('city') : '';
-        instance.get('/event/getAll.php'+temp).then(res=>{
+        let tempCity = '?city=' + (query.get('city') === null ? '' : query.get('city'));
+        let tempCat = '&category='+ (query.get('category') === null ? ''  :query.get('category'));
+        instance.get('/event/getAll.php'+tempCity+tempCat).then(res=>{
             this.setState({
                 events : res.data
             })
@@ -46,8 +47,9 @@ export default class Events extends React.Component{
     componentWillUpdate(){
         let query = new URLSearchParams(window.location.search)
         if(this.state.query !== query.get('city')){
-            let temp = query.get('city') ? '?city='+query.get('city') : '';
-            instance.get('/event/getAll.php'+temp).then(res=>{
+            let tempCity = '?city=' + (query.get('city') === null ? '' : query.get('city'));
+            let tempCat = '&category='+ (query.get('category') === null ? ''  :query.get('category'));
+            instance.get('/event/getAll.php'+tempCity+tempCat).then(res=>{
                 this.setState({
                     events : res.data,
                     query : query.get('city')
@@ -56,12 +58,10 @@ export default class Events extends React.Component{
         }
     }
     handleChange(ev){
-        let temp = this.state;
-        if(ev.target.label)
-            temp[ev.target.accessKey]  = ev.target.value;    
-        else 
-            temp[ev.target.name]  = ev.target.value;
-        this.setState(temp);
+        let url = new URL(window.location.href)
+        url.searchParams.set('category',ev.target.value)
+        this.setState({categories : ev.target.value});
+        window.location.href = url.href
     }
     renderEventBtn(price,status){
         if(status === 'SOLD')
@@ -79,7 +79,7 @@ export default class Events extends React.Component{
             el.push(
                 <React.Fragment key={cat + 'event'}>
                 {/* eslint-disable-next-line  */}
-                <option className="dropdown-item" accessKey="categories" value={cat} onMouseDown={this.handleChange}>{cat}</option>
+                <option className="dropdown-item" value={cat} selected={this.state.categories === cat ? true : false} onMouseDown={this.handleChange}>{cat}</option>
                 </React.Fragment>
             )
         }

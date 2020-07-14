@@ -2,24 +2,55 @@ import React from 'react';
 import './Detail.css'
 import Checkout from '../Checkout/Checkout';
 import instance from '../../../Modules/instances'
+import {commentData} from '../../../dataTest/comment'
+import Comment from './comment';
+import Auth from '../../../Modules/Auth';
 export default  class Detail extends React.Component{
     constructor(props){
         super(props)
         this.state = {
             event : {
             },
-            comment : [],
+            update : false,
+            comment : commentData,
             commentCount : 3,
+            like : {
+                count : 0,
+                isLike : false
+            }
+        }
+        this.updateMe = this.updateMe.bind(this)
+    }
+    updateMe(){
+        this.setState({update : !this.state.update})
+    }
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if(this.state.update !== prevState.update){
+            instance.get('comment/get.php?id='+this.props.match.params.id).then(res=>{
+                console.log(res.data);
+                this.setState({comment : res.data})
+            })
+            instance.get('/like/get.php?id='+this.props.match.params.id).then(res=>{
+                this.setState({like : res.data})
+                if(res.data.isLike)
+                    document.getElementById('fav-btn').className = 'btn detail-act-btn text-danger'
+            })
         }
     }
-    
     componentDidMount(){
         try{
             //get event data
             instance.get(`/event/get.php?id=${this.props.match.params.id}`).then((res)=>{
                 this.setState({event : res.data})
             })
-            
+            instance.get('comment/get.php?id='+this.props.match.params.id).then(res=>{
+                this.setState({comment : res.data})
+            })
+            instance.get('/like/get.php?id='+this.props.match.params.id).then(res=>{
+                this.setState({like : res.data})
+                if(res.data.isLike)
+                    document.getElementById('fav-btn').className = 'btn detail-act-btn text-danger'
+            })
                 // eslint-disable-next-line
                 throw 'error'
         } catch (err){
@@ -27,10 +58,11 @@ export default  class Detail extends React.Component{
         }        
     }
     favClick(ev){
-        if(ev.target.className === 'btn detail-act-btn text-danger')
-            document.getElementById('fav-btn').className = 'btn detail-act-btn'
-        else 
-            document.getElementById('fav-btn').className = 'btn detail-act-btn text-danger'
+        instance.post('like/like.php',{
+            event : this.props.match.params.id
+        }).then((res)=>{
+            this.updateMe()
+        })
     }
     likeClick(i){
         let temp = this.state.comment;        
@@ -49,28 +81,20 @@ export default  class Detail extends React.Component{
     renderComment(){
         var comment = this.state.comment
         if(comment.length === 0)
-            return 1
+            return <></>
         var element = []
-        for(let i = 0 ; i < this.state.commentCount;i++){         
-            if(i>= comment.length)   
-                break;
+        comment.forEach((com,i)=>{
             element.push(
                 <div className="cont-search" key={i}>
                     <div className="row">
                         <div className="col-12 col-lg-8">
-                            <h6><b>{comment[i].name}</b></h6>
-                            <p className="text-justify">{comment[i].message}</p>
+                            <h6><b>{com.email}</b><p>{com.date}</p></h6>
+                            <p className="text-justify">{com.message}</p>
                         </div>
-                        <div className="col-12 col-lg-4">
-                            <div className="row float-right">
-                                <button onClick={()=>this.likeClick(i)} className="btn detail-act-btn"><i className={this.isLike(comment[i].like)} />99</button>
-                                <button className="btn detail-act-btn">Reply</button>
-                            </div>
-                        </div>
-                    </div>
+                    </div>                    
                 </div>
             )
-        }
+        })
         return element
     }
     handleShowMore(){
@@ -107,7 +131,7 @@ export default  class Detail extends React.Component{
                 </div>
                 <div className="row cont-search p-3 my-5">
                     <div>
-                    <button className="btn detail-act-btn" id='fav-btn' onClick={(ev)=>this.favClick(ev)}><i className='fa fa-heart mr-2'/> 99</button>
+                    <button className="btn detail-act-btn" id='fav-btn' onClick={(ev)=>this.favClick(ev)}><i className='fa fa-heart mr-2'/>{this.state.like.count}</button>
                     <a href='#comments'><button className="btn detail-act-btn">Comments</button></a>
                     </div>
                     <div className="det-cont-btn">
@@ -124,10 +148,16 @@ export default  class Detail extends React.Component{
                     </div>
                 </div>
                 <div className="detail-comment my-5" id='comments'>
-                    <h4><b>Comments</b></h4>
+                    <h4><b>Comments</b></h4>                                 
                     <div>
                         {this.renderComment()}
                     </div>
+                    {
+                        Auth.isUserAuthenticated() &&  
+                        <div>
+                            <Comment eventid={this.props.match.params.id} update={this.updateMe}/>
+                        </div>
+                    }       
                     {
                         this.state.commentCount < this.state.comment.length &&
                         <div className="detail-show">

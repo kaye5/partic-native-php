@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import {commentData} from '../../../dataTest/comment'
 import Modal from "@material-ui/core/Modal";
 import instance from '../../../Modules/instances';
 import Message from '../../../Modules/message';
@@ -10,7 +9,11 @@ export default class Manage extends React.Component{
         this.state = {
             currency : 'IDR',
             event : {},
-            fav : '',
+            like : {
+                count : 0,
+                isLike : false
+            },
+            update : false,
             comment : [],
             commentCount : 3,
             modalContact : false,
@@ -40,9 +43,20 @@ export default class Manage extends React.Component{
         }).then(res=>{
             if(res.data === 'OK')
                 this.setState({msg : {type : 'success' , msg : 'Done'}})
-        })
+        })        
     }
-    
+    componentDidUpdate(prevProps, prevState, snapshot){
+        if(this.state.update !== prevState.update){
+            instance.get('comment/get.php?id='+this.props.match.params.id).then(res=>{
+                this.setState({comment : res.data})
+            })
+            instance.get('/like/get.php?id='+this.props.match.params.id).then(res=>{
+                this.setState({like : res.data})
+                if(res.data.isLike)
+                    document.getElementById('fav-btn').className = 'btn detail-act-btn text-danger'
+            })
+        }
+    }
     renderOption(data,name){
         let el = [];
         for(let key in data){
@@ -70,7 +84,15 @@ export default class Manage extends React.Component{
     }
     componentDidMount(){
         instance.get(`/admin/eventDetail.php?id=${this.props.match.params.id}`).then(res=>{
-            this.setState({event : res.data,comment: commentData})
+            this.setState({event : res.data})
+        })
+        instance.get('comment/get.php?id='+this.props.match.params.id).then(res=>{
+            this.setState({comment : res.data})
+        })
+        instance.get('/like/get.php?id='+this.props.match.params.id).then(res=>{
+            this.setState({like : res.data})
+            if(res.data.isLike)
+                document.getElementById('fav-btn').className = 'btn detail-act-btn text-danger'
         })
         this.fetchData();
     }
@@ -108,31 +130,36 @@ export default class Manage extends React.Component{
         let temp = this.state.commentCount;
         this.setState({commentCount : temp+3})
     }
+    deleteComment(commentid){
+        instance.post('/comment/delete.php',{
+            id : commentid
+        }).then(res=>{
+            console.log(res.data);
+            if(res.data === 'OK'){
+                this.setState({update : Date.now()})
+            }
+        })
+    }
     renderComment(){
         var comment = this.state.comment
         if(comment.length === 0)
-            return 1
+            return <></>
         var element = []
-        for(let i = 0 ; i < this.state.commentCount;i++){         
-            if(i>= comment.length)   
-                break;
+        comment.forEach((com,i)=>{
             element.push(
                 <div className="cont-search" key={i}>
                     <div className="row">
                         <div className="col-12 col-lg-8">
-                            <h6><b>{comment[i].name}</b></h6>
-                            <p className="text-justify">{comment[i].message}</p>
+                            <h6><b>{com.email}</b><p>{com.date}</p></h6>
+                            <p className="text-justify">{com.message}</p>
                         </div>
-                        <div className="col-12 col-lg-4">
-                            <div className="row float-right">
-                                <button onClick={()=>this.likeClick(i)} className="btn detail-act-btn"><i className={this.isLike(comment[i].like)} />99</button>
-                                <button className="btn detail-act-btn">Reply</button>
-                            </div>
+                        <div className='col'>
+                        <button className="btn partic-btn partic-yellow-bg py-2 px-5 m-3 bg-danger" onClick={()=>this.deleteComment(com.id)}>Delete</button>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
             )
-        }
+        })
         return element
     }
     deleteEvent(){
@@ -178,7 +205,7 @@ export default class Manage extends React.Component{
                     </div>
                     <div className="row" style={{justifyContent:"center"}}>
                         <div className="cont-search text-center">
-                            <button className={"btn detail-act-btn "+this.state.fav} id="fav-btn"  onClick={(e)=>this.handleFav(e)}><i className="fa fa-heart mr-2"></i> 99</button>
+                            <button className={"btn detail-act-btn "+this.state.fav} id="fav-btn"  onClick={(e)=>this.handleFav(e)}><i className="fa fa-heart mr-2"></i>{this.state.like.count}</button>
                             <a href="#comments"><button className="btn detail-act-btn">Comments</button></a>
                         </div>
                     </div>

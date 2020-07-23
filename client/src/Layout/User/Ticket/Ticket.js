@@ -19,12 +19,11 @@ export default  class Ticket extends React.Component{
         })
     }
     renderStatusColor(stat){
-        stat.toLocaleLowerCase()
-        if(stat === "attended")
+        if(stat.toLocaleLowerCase() === "attended")
             return "text-success"
-        else if(stat === 'waiting for payment')
+        else if(stat.toLocaleLowerCase() === 'waiting for payment')
             return 'text-warning'
-        else if(stat === 'expired')
+        else if(stat.toLocaleLowerCase() === 'expired')
             return "partic-grey-t"
         else
             return "text-danger"
@@ -78,7 +77,9 @@ export default  class Ticket extends React.Component{
                                     </div>
                                     <div className="col-12 col-md-3" style={{textAlign:"center"}}>
                                         <p className="font-weight-bold">Qty : {data.qty}</p>
-                                        <button className="btn partic-btn partic-yellow-bg"><i className="fa fa-download"/>&nbsp;Download ticket</button>
+                                        <a className="btn partic-btn partic-yellow-bg"
+                                        href={`${instance.defaults.baseURL}/generatePdf.php?ticket=${data.id}&token=${localStorage.getItem('user')}`}
+                                        ><i className="fa fa-download"/>&nbsp;Download ticket</a>
                                     </div>
                                 </div>                                
                             </div>

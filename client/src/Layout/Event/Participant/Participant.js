@@ -39,6 +39,7 @@ export default function Participant(props){
     }
     React.useEffect(()=>{
         fetchData()
+        // eslint-disable-next-line
     },[send])
     function showProfile() {
         let profile = data[showInfo.idx]
@@ -78,18 +79,28 @@ export default function Participant(props){
                     <td onClick={()  => setShowInfo({show : true,idx})}>{el.id}</td>
                     <td onClick={()  => setShowInfo({show : true,idx})}>{el.qty}</td>
                     <td onClick={()  => setShowInfo({show : true,idx})}>{el.name}</td>
-                    <td onClick={()  => setShowInfo({show : true,idx})}>{el.email}</td>
+                    <td onClick={()  => setShowInfo({show : true,idx})}>{el.email}</td>                   
                     <td className={'font-weight-bold '+setStatusColor(el.status)}>{el.status}</td>
+                    <td onClick={()  => setShowInfo({show : true,idx})}>{el.payment_method}</td>
+                    <td onClick={()  => setShowInfo({show : true,idx})}>{el.biller_name}</td>
+                    <td onClick={()  => setShowInfo({show : true,idx})}>{el.biller_email}</td>
                     {
-                        el.status.toUpperCase() !== 'ATTENDED' ? 
-                        <td><button className='btn partic-btn bg-success text-white' id={'ATTENDED-'+el.id} onClick={handleUpdateStat}>ATTEND</button></td>
-                        :
-                        <td><button className='btn partic-btn bg-danger text-white' id={'NOT ATTENDED-'+el.id} onClick={handleUpdateStat}>Cancle</button></td>
+                        renderAction(el.status,el)
                     }                    
                 </tr>
             )
         })
         return element
+    }
+    const renderAction = (status,el) =>{
+        if(status.toUpperCase() === 'ATTENDED')
+            return (<td><button className='btn partic-btn bg-danger text-white' id={'NOT ATTENDED-'+el.id} onClick={handleUpdateStat}>Cancel</button></td>)
+        else if(status.toUpperCase() === 'WAITING CONFIRMATION')
+            return (<td><button className='btn partic-btn bg-warning text-white' id={'NOT ATTENDED-'+el.id} onClick={handleUpdateStat}>Confirm</button></td>)
+        else if(status.toUpperCase() === 'NOT ATTENDED')
+            return (<td><button className='btn partic-btn bg-success text-white' id={'ATTENDED-'+el.id} onClick={handleUpdateStat}>ATTEND</button></td>)
+        else
+            return (<td><button className='btn btn-primary' disabled>Confirm</button></td>)
     }
     return (
         <React.Fragment>
@@ -110,6 +121,9 @@ export default function Participant(props){
                             <th>Name</th>
                             <th>Email</th>
                             <th>Status</th>
+                            <th>Payment Method</th>
+                            <th>Biller Name</th>
+                            <th>Biller Email</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -118,9 +132,9 @@ export default function Participant(props){
                     </tbody>
                 </table>
             </div>
-            <div className="row float-right my-3">
+            {/* <div className="row float-right my-3">
                 <button className="btn partic-btn partic-blue-bg py-2 px-5">Convert to .Xls</button>
-            </div>
+            </div> */}
         </React.Fragment>
     )
 }

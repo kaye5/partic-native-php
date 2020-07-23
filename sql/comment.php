@@ -19,8 +19,8 @@
     }
     function deleteComment($adminEmail,$id){
         global $pdo;
-        $sth = $pdo->prepare('delete comment com
-        inner join event ev on com.event = ev.id where ev.email = :email and com.id = $id');
+        $sth = $pdo->prepare('delete com from comment com
+        inner join event ev on com.event = ev.id where ev.email = :email and com.id = :id');
         return $sth->execute(array(
             'email'=>$adminEmail,
             'id'=>$id

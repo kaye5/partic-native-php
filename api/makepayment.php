@@ -17,7 +17,7 @@
         'method'=>$_POST['method'], 'total'=>1000,
         'name'=>$_POST['name'], 'email'=>$_POST['email'], 'ticket'=>$_POST['id']
     ))){
-        if(updateStatus('NOT ATTEND',$_POST['id']))
+        if(updateStatus('WAITING CONFIRMATION',$_POST['id']))
             sendStatus(200);
     }    
 ?>

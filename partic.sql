@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 16, 2020 at 04:33 PM
+-- Generation Time: Jul 27, 2020 at 04:27 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -85,7 +85,8 @@ CREATE TABLE `comment` (
 
 INSERT INTO `comment` (`id`, `message`, `event`, `email`, `date`) VALUES
 (1, 'Hello apa kabar', 10, 'kevinyusyus@gmail.com2', '2020-07-14'),
-(2, 'Hello Apa kabar sayang ku', 9, 'sistech.uphmedan@gmail.com', '2020-07-14');
+(2, 'Hello Apa kabar sayang ku', 9, 'sistech.uphmedan@gmail.com', '2020-07-14'),
+(6, 'Apa kabar kalian semua ', 8, 'kevinyusyus@gmail.com2', '2020-07-23');
 
 -- --------------------------------------------------------
 
@@ -116,9 +117,10 @@ CREATE TABLE `event` (
 --
 
 INSERT INTO `event` (`id`, `name`, `slot`, `location`, `description`, `image`, `datecreate`, `start`, `openregis`, `closeregis`, `status`, `price`, `city_id`, `category_id`, `email`) VALUES
-(8, 'Event Name', 3, 'My Location', 'Description again', 'http://localhost/partic/uploads/Event NameETIC_BLACK.png', '2020-07-12', '2020-08-08', '2020-08-08', '2020-08-08', 'open', 100000, 5, 5, 'kevinyusyus@gmail.com2'),
-(9, 'Event 2', 3, 'Location', 'Nama', 'http://localhost/partic/uploads/Event 2ETIC_BLACK.png', '2020-07-12', '2020-08-08', '2020-08-08', '2020-08-08', 'open', 10000, 4, 4, 'kevinyusyus@gmail.com2'),
-(10, 'SIstech Event', 10, 'Medan', 'SIstech first event', 'http://localhost/partic/uploads/SIstech Eventtipod.png', '2020-07-12', '2020-07-01', '2020-07-01', '2020-07-01', 'open', 10000, 3, 3, 'sistech.uphmedan@gmail.com');
+(8, 'Event Name KAYEE', 3, 'My Location', 'Description again', 'http://localhost/partic/uploads/Event NameETIC_BLACK.png', '2020-07-12', '2020-08-08', '2020-08-08', '2020-08-08', 'open', 100000, 5, 5, 'kevinyusyus@gmail.com2'),
+(9, 'Etic Event', 3, 'Location', 'Nama', 'http://localhost/partic/uploads/Etic EventBG meeting.jpg', '2020-07-12', '2020-08-08', '2020-08-08', '2020-08-08', 'open', 10000, 4, 4, 'kevinyusyus@gmail.com2'),
+(10, 'SIstech Event', 10, 'Medan', 'SIstech first event', 'http://localhost/partic/uploads/SIstech Eventtipod.png', '2020-07-12', '2020-07-01', '2020-07-01', '2020-07-01', 'open', 10000, 3, 3, 'sistech.uphmedan@gmail.com'),
+(11, 'KPU', 10, 'fdss', 'halloo', 'http://localhost/partic/uploads/KPUmessageImage_1589703332647.jpg', '2020-07-22', '2020-07-22', '2020-06-30', '2020-07-24', 'open', 1000, 1, 1, 'kevinyusyus@gmail.com2');
 
 -- --------------------------------------------------------
 
@@ -151,9 +153,11 @@ CREATE TABLE `favourite` (
 --
 
 INSERT INTO `favourite` (`event`, `email`) VALUES
+(8, 'kevinyusyus@gmail.com2'),
 (9, 'kevinyusyus@gmail.com2'),
 (9, 'sistech.uphmedan@gmail.com'),
-(10, 'kevinyusyus@gmail.com2');
+(10, 'kevinyusyus@gmail.com2'),
+(11, 'sistech.uphmedan@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -200,7 +204,10 @@ INSERT INTO `ticket` (`id`, `status`, `qty`, `price`, `event`, `email`, `datecre
 (4, 'ATTENDED', 3, 300000, 8, 'kevinyusyus@gmail.com2', '2020-07-12'),
 (5, 'ATTENDED', 1, 10000, 9, 'kevinyusyus@gmail.com2', '2020-07-12'),
 (6, 'ATTENDED', 1, 10000, 9, 'sistech.uphmedan@gmail.com', '2020-07-12'),
-(7, 'NOT ATTEND', 1, 10000, 10, 'kevinyusyus@gmail.com2', '2020-07-12');
+(7, 'NOT ATTEND', 1, 10000, 10, 'kevinyusyus@gmail.com2', '2020-07-12'),
+(9, 'ATTENDED', 2, 2000, 11, 'kevinyusyus@gmail.com2', '2020-07-22'),
+(10, 'ATTENDED', 1, 1000, 11, 'kevinyusyus@gmail.com2', '2020-07-23'),
+(11, 'WAITING CONFIRMATION', 1, 1000, 11, 'kevinyusyus@gmail.com2', '2020-07-23');
 
 -- --------------------------------------------------------
 
@@ -223,7 +230,9 @@ CREATE TABLE `transaction` (
 
 INSERT INTO `transaction` (`id`, `payment_method`, `total`, `name`, `email`, `ticket`) VALUES
 (14, 'cc', 1000, 'Kevin Yuslianto', 'kevinyusyus@gmail.com', 7),
-(18, 'cc', 1000, 'Kevin Yuslianto', 'kevinyusyus@gmail.com', 6);
+(18, 'cc', 1000, 'Kevin Yuslianto', 'kevinyusyus@gmail.com', 6),
+(20, 'cc', 1000, 'Kevin Yuslianto', 'kevinyusyus@gmail.com', 10),
+(21, 'cc', 1000, 'Kevin Yuslianto', 'kevinyusyus@gmail.com', 11);
 
 -- --------------------------------------------------------
 
@@ -251,7 +260,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`email`, `name`, `password`, `phone`, `gender`, `instagram`, `website`, `blog`, `address`, `job`, `company`, `country`) VALUES
-('kevinyusyus@gmail.com2', 'Kaye', '123', '+62 1234', 'male', '123', '', '', '', '', '', ''),
+('kevinyusyus@gmail.com', 'Kevin Yuslianto', '123', '083194617930', 'male', '', '', '', '', '', '', ''),
+('kevinyusyus@gmail.com2', 'Kaye2', '123', '+62 1234', 'male', 'kevinyus', 'website', 'blog', '', 'Web Developer', 'apa', ''),
 ('kevinyusyus@gmail.com3', 'Kevin Yuslianto', '123', '083194617930', 'male', '', '', '', '', '', '', ''),
 ('sistech.uphmedan@gmail.com', 'Sistech', '123', '083194617930', 'male', 'kevinyus', '', '', '', '', '', '');
 
@@ -350,25 +360,25 @@ ALTER TABLE `city`
 -- AUTO_INCREMENT for table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables

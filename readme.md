@@ -22,7 +22,7 @@ $ npm start
 ```
 7. React dev server should be running on port 3000.
 8.  so go to [http://localhost:3000](http://localhost:3000) on your brwoser.
-> You need to have yarn or npm and xampp installed on your machine. npm came inside nodejs installation. refer to this [Node js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/) for installation. pick one of them.
+> You need to have yarn or npm and xampp installed on your machine. npm came inside nodejs installation. refer to this [Node js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/) for installation. yarn is optional.
 for xampp  installation refer to this [Xampp](https://www.apachefriends.org/index.html)
 ### Structure
 -  ```/api/...``` Restfull endpoints.
